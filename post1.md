@@ -174,13 +174,17 @@ We need to do the same thing for each ingredient schema to link the ingredients 
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Pizza_dough_recipe.jpg/400px-Pizza_dough_recipe.jpg" alt="Python Pizzeria" style="float:left;padding-right:20px">
 
-One thing to note here is that only a crust is _really_ required if you think about it. Maybe you would just call it bread at that point, but let's not get too philosophical.
+One thing to note here is that only a crust is _really_ required to make a pizza if you think long and hard about it. Maybe we'd just call it bread at that point, but let's not get too philosophical.
 
-Also note the "relationship" field type which designates that the origin model (the one we're defining the relationship field on, pizzas) can have multiple different items of from the ingredient categories it is pointing to (in this case toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
+Also note the "relationship" field type which designates that the "parent" model (the one we're defining the relationship field on, pizzas) can have multiple different items of from the types of ingredients it is related to (the "child" models in this case being toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
 
-### Backreferences & ondeletes, oh my!
+### Backrefs & ondeletes, oh my!
 
-A backreference is just telling the database that when a model is related to some other model, the "foreign" one being pointed at can access the one that is doing the pointing by doing a "backwards" query. E.g. the crust of a given pizza style instance would be Pizza.crust_id, whereas a list of the pizza styles calling for a given crust would be Crust.pizzas.
+These two arguments are required when defining relationships.
+
+A backreference argument is just telling the database that when a model is related to some other model specified by a relationship field, the "child" on the other side will also provide access "backwards" to the parent that defined the relation. E.g. the crust of a particular style of pizza would be accessible as Pizza.crust_id, whereas a list of the pizza styles calling for a given crust would be Crust.pizzas.
+
+An ondelete argument is telling the database that when the instance of a parent model in a relationship is deleted, to change the value of its child's reference field appropriately. In our case that would be if a particular style of Pizza is deleted, that it's crust would set the reference back to the pizza style as 'NULL'. I.e. nullifying Crust.pizza_id['<deleted_pizza_style_id>'] but preserving the particular crust itself and the remaining list of other styles that still call for it.
 
 
 Creating endpoints
