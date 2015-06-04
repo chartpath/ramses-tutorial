@@ -23,7 +23,7 @@ If at any time you get stuck or want to see the final working version of the cod
 
 ### Scenario: a factory to make (hopefully) delicious pizzas
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/FatPizzaShopHumeHwyChullora.JPG" alt="Python Pizzeria" style="float:right;max-width:400px;padding:20px">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/FatPizzaShopHumeHwyChullora.JPG/400px-FatPizzaShopHumeHwyChullora.JPG" alt="Python Pizzeria" style="float:right;padding-left:20px">
 
 We want to create an API for our new pizzeria. Our backend should know about all the different toppings, cheeses, sauces, and crusts that can be used and the different combinations of them that go into making various pizza styles. We also want to be able to do queries to figure out which styles are currently available based on the availability of their ingredients, and to be able to create new pizza styles on the fly.
 
@@ -139,17 +139,31 @@ Under the "id", "name" and "description" fields, add the following relations to 
             "backref_ondelete": "NULLIFY",
         }
     },
-    "sauce": {
+    "sauce_id": {
         "required": false,
         "type": "foreign_key",
         "args": {
-            "ref_document": "Pizza",
-            "ref_column": "pizza.id",
+            "ref_document": "Sauce",
+            "ref_column": "sauce.id",
             "ref_column_type": "id_field"
         }
     },
-    "crust": {
+    "crust_id": {
         "required": true,
+        "type": "foreign_key",
+        "args": {
+            "ref_document": "Crust",
+            "ref_column": "crust.id",
+            "ref_column_type": "id_field"
+        }
+    }
+
+### Relations
+
+We need to do the same thing for each ingredient schema to link the ingredients to the pizza styles that call for them. In **toppings.json** we need a foreign key to the individual pizza IDs that each topping would be used by (again, put this after "name" and "description"):
+
+    "pizza_id": {
+        "required": false,
         "type": "foreign_key",
         "args": {
             "ref_document": "Pizza",
@@ -158,18 +172,19 @@ Under the "id", "name" and "description" fields, add the following relations to 
         }
     }
 
-We also need to do the corresponding thing to each ingredient schema to link the ingredients to the pizza recipes that call for them. In **toppings.json** we need a foreign key to the individual pizza IDs that each topping would be used by (again, put this after "name" and "description"):
-
-    "pizza_id": {
-        "required": false,
-
-    }
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Pizza_dough_recipe.jpg/400px-Pizza_dough_recipe.jpg" alt="Python Pizzeria" style="float:left;padding-right:20px">
 
 One thing to note here is that only a crust is _really_ required if you think about it. Maybe you would just call it bread at that point, but let's not get too philosophical.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Pizza_dough_recipe.jpg" alt="Python Pizzeria" style="float:left;max-width:370px;padding:20px">
-
 Also note the "relationship" field type which designates that the origin model (the one we're defining the relationship field on, pizzas) can have multiple different items of from the ingredient categories it is pointing to (in this case toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
+
+### Backreferences & ondeletes, oh my!
+
+A backreference is just telling the database that when a model is related to some other model, the "foreign" one being pointed at can access the one that is doing the pointing by doing a "backwards" query. E.g. the crust of a given pizza style instance would be Pizza.crust_id, whereas a list of the pizza styles calling for a given crust would be Crust.pizzas.
+
+
+Creating endpoints
+------------------
 
 At this point, our kitchen is almost ready. In order to actually start making pizzas, we need to hook up some API enpoints to access the data models we just created.
 
