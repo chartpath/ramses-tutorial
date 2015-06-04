@@ -10,21 +10,97 @@ version: v1
 mediaType: application/json
 protocols: [HTTP]
 
-/items:
-    displayName: Collection of items
+/pizzas:
+    displayName: Collection of pizza styles
     get:
-        description: Get all item
+        description: Get all pizza styles
     post:
-        description: Create a new item
+        description: Create a new pizza style
         body:
             application/json:
-                schema: !include items.json
+                schema: !include schemas/pizzas.json
 
     /{id}:
-        displayName: Collection-item
+        displayName: A particular pizza style
         get:
-            description: Get a particular item
+            description: Get a particular pizza style
         delete:
-            description: Delete a particular item
+            description: Delete a particular pizza style
         patch:
-            description: Update a particular item
+            description: Update a particular pizza style
+
+/toppings:
+    displayName: Collection of ingredients for toppings
+    get:
+        description: Get all topping ingredients
+    post:
+        description: Create a topping ingredient
+        body:
+            application/json:
+                schema: !include schemas/toppings.json
+
+    /{id}:
+        displayName: A particular topping ingredient
+        get:
+            description: Get a particular topping ingredient
+        delete:
+            description: Delete a particular topping ingredient
+        patch:
+            description: Update a particular topping ingredient
+
+/cheeses:
+    displayName: Collection of different cheeses
+    get:
+        description: Get all cheeses
+    post:
+        description: Create a new cheese
+        body:
+            application/json:
+                schema: !include schemas/cheeses.json
+
+    /{id}:
+        displayName: A particular cheese ingredient
+        get:
+            description: Get a particular cheese
+        delete:
+            description: Delete a particular cheese
+        patch:
+            description: Update a particular cheese
+
+/sauces:
+    displayName: Collection of different sauces
+    get:
+        description: Get all sauces
+    post:
+        description: Create a new sauce
+        body:
+            application/json:
+                schema: !include schemas/sauces.json
+
+    /{id}:
+        displayName: A particular sauce
+        get:
+            description: Get a particular sauce
+        delete:
+            description: Delete a particular sauce
+        patch:
+            description: Update a particular sauce
+
+/crusts:
+    displayName: Collection of different crusts
+    get:
+        description: Get all crusts
+    post:
+        description: Create a new crust
+        body:
+            application/json:
+                schema: !include schemas/crusts.json
+
+    /{id}:
+        displayName: A particular crust
+        get:
+            description: Get a particular crust
+        delete:
+            description: Delete a particular crust
+        patch:
+            description: Update a particular crust

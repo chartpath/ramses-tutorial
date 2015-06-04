@@ -9,7 +9,7 @@ Making an API can be a lot of work. Developers need to handle details like seria
 
 Some drawbacks of using third party backend providers include a lack of control over the backend code, inability to self-host, no intellectual property etc. Having control over the code _and_ leveraging the time-saving convenience of a BaaS would be ideal, but most REST API frameworks in the wild still require a lot of boilerplate. One popular example of this would be the awesomely heavy Django Rest Framework. Another great project which requires way less boilerplate and makes building APIs super easy is flask-restless, however it has a hard dependency on Postgres as the only/primary database.
 
-Enter Ramses, a simple way to generate a powerful backend from a YAML file. In this post we'll show you how to go from zero to your own production-ready backend in minutes.
+Enter Ramses, a simple way to generate a powerful backend from a YAML file (actually a dialect for REST APIs called [RAML](http://raml.org/)). In this post we'll show you how to go from zero to your own production-ready backend in a few minutes.
 
 
 Creating a new product API:
@@ -17,7 +17,7 @@ Creating a new product API:
 
 ### Prerequisites
 
-We assume you are working inside a fresh [virtual Python environment](https://virtualenv.pypa.io/en/latest/), and are running both elasticsearch and postgresql with default configurations. We use [httpie](https://github.com/jakubroztocil/httpie) to interact with the API but you may also use curl or other http clients.
+We assume you are working inside a fresh [virtual Python environment](https://virtualenv.pypa.io/en/latest/), and are running both [elasticsearch](https://www.elastic.co/downloads/elasticsearch) and [postgresql](http://www.postgresql.org/download/) with default configurations. We use [httpie](https://github.com/jakubroztocil/httpie) to interact with the API but you can also use curl or other http clients.
 
 If at any time you get stuck or want to see the final working version of the code for this tutorial, [it can be found here]().
 
@@ -101,7 +101,9 @@ Data modelling
 
 ### Schemas!
 
-Now we need to create schemata for the different kinds of ingredients that we will make our pizzas from. The default schema from Ramses is a basic example in items.json.
+Schemas describe the structure of data.
+
+We need to create schemata for the different kinds of ingredients that we will make our pizzas from. The default schema from Ramses is a basic example in items.json.
 
 Since we're going to have more than one schema in our project, let's create a new directory and move the default schema into it to keep things clean.
 
@@ -148,17 +150,20 @@ Under the "id", "name" and "description" fields, add the following relations to 
     },
     "crust": {
         "required": true,
-            "type": "foreign_key",
-            "args": {
-                "ref_document": "Pizza",
-                "ref_column": "pizza.id",
-                "ref_column_type": "id_field"
+        "type": "foreign_key",
+        "args": {
+            "ref_document": "Pizza",
+            "ref_column": "pizza.id",
+            "ref_column_type": "id_field"
         }
     }
 
 We also need to do the corresponding thing to each ingredient schema to link the ingredients to the pizza recipes that call for them. In **toppings.json** we need a foreign key to the individual pizza IDs that each topping would be used by (again, put this after "name" and "description"):
 
-    "pizzas"
+    "pizza_id": {
+        "required": false,
+
+    }
 
 One thing to note here is that only a crust is _really_ required if you think about it. Maybe you would just call it bread at that point, but let's not get too philosophical.
 
@@ -277,9 +282,13 @@ Let's open up **api.raml** and replace the old "items" endpoint for each of our 
             patch:
                 description: Update a particular crust
 
-We can easily create our own ingredients and recipes now.
+We can easily create our own ingredients and pizza styles now!
 
-For example, to make a Hawaiian style pizza, I might do something like this while the server is running:
+Restart the server and get cooking:
+
+    $ pserve local.ini
+
+Let's start by making a Hawaiian style pizza:
 
     $ http POST :6543/api/toppings name=ham description="because yum"
     $ 
