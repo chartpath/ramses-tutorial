@@ -23,7 +23,7 @@ If at any time you get stuck or want to see the final working version of the cod
 
 ### Scenario: a factory to make (hopefully) delicious pizzas
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/FatPizzaShopHumeHwyChullora.JPG" alt="Python Pizzeria" style="width:400px;padding:20px;" align="right">
+<img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/FatPizzaShopHumeHwyChullora.JPG" alt="Python Pizzeria" style="float:right;max-width:400px;padding:20px">
 
 We want to create an API for our new pizzeria. Our backend should know about all the different toppings, cheeses, sauces, and crusts that can be used and the different combinations of them that go into making various pizza styles. We also want to be able to do queries to figure out which styles are currently available based on the availability of their ingredients, and to be able to create new pizza styles on the fly.
 
@@ -167,7 +167,7 @@ We also need to do the corresponding thing to each ingredient schema to link the
 
 One thing to note here is that only a crust is _really_ required if you think about it. Maybe you would just call it bread at that point, but let's not get too philosophical.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Pizza_dough_recipe.jpg" alt="Python Pizzeria" style="width:300px;padding:20px;" align="left">
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Pizza_dough_recipe.jpg" alt="Python Pizzeria" style="float:left;max-width:370px;padding:20px">
 
 Also note the "relationship" field type which designates that the origin model (the one we're defining the relationship field on, pizzas) can have multiple different items of from the ingredient categories it is pointing to (in this case toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
 
