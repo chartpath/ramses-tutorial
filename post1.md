@@ -184,7 +184,7 @@ These two arguments are required when defining relationships.
 
 A backreference argument is just telling the database that when a model is related to some other model specified by a relationship field, the "child" on the other side will also provide access "backwards" to the parent that defined the relation. E.g. the crust of a particular style of pizza would be accessible as Pizza.crust_id, whereas a list of the pizza styles calling for a given crust would be Crust.pizzas.
 
-An ondelete argument is telling the database that when the instance of a parent model in a relationship is deleted, to change the value of its child's reference field appropriately. In our case that would be if a particular style of Pizza is deleted, that it's crust would set the reference back to the pizza style as 'NULL'. I.e. nullifying Crust.pizza_id['<deleted_pizza_style_id>'] but preserving the particular crust itself and the remaining list of other styles that still call for it.
+An ondelete argument is telling the database that when the instance of a parent model in a relationship is deleted, to change the value of its child's reference field appropriately. In our case that would be if a particular style of Pizza is deleted, that it's crust would set the reference back to the pizza style as 'NULL'. I.e. nullifying Crust.pizzas['<deleted_pizza_style_id>'] but preserving the particular crust itself and the remaining list of other styles that still call for it.
 
 
 Creating endpoints
