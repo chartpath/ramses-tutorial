@@ -184,11 +184,11 @@ Also note the "relationship" field type which designates that the "parent" model
 
 **Here be dragons!** To learn about using relational database concepts in detail, refer to the [SQLAlchemy documentation](http://docs.sqlalchemy.org/en/latest/orm/tutorial.html).
 
-###### Briefly
+##### _Very_ briefly
 
-A backref argument tells the database that when a model is related to some other model as indicated by a relationship field, the "referencing" model (which has a foreign_key field) will also provide access "backwards" to the "referenced" model (which has the relationship field).
+A `backref` argument tells the database that when one model is referenced by another, the "referencing" model (which has a `foreign_key` field) will also provide access "backwards" to the "referenced" model.
 
-An ondelete argument is telling the database that when the instance of a referenced model in a relationship is deleted, to change the value of the field on the model that was referencing it appropriately.
+An `ondelete` argument is telling the database that when the instance of a referenced model is deleted, to change the value of the referencing field accordingly. `NULLIFY` means that the value will be set to `null`.
 
 ---
 
