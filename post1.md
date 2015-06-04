@@ -1,9 +1,9 @@
-Create a REST API in minutes with Python and Ramses
-===================================================
+Create a REST API in minutes with Pyramid and Ramses
+====================================================
 
 
-Intro:
-------
+Intro
+-----
 
 Making an API can be a lot of work. Developers need to handle details like serialization, URL mapping, validation, authentication, authorization, versioning, testing, databases, custom code for models and views, etc. Services like Firebase and Parse exist to make this way easier. Using a Backend-as-a-Service, developers can focus more on building unique user experiences.
 
@@ -12,8 +12,8 @@ Some drawbacks of using third party backend providers include a lack of control 
 Enter Ramses, a simple way to generate a powerful backend from a YAML file (actually a dialect for REST APIs called [RAML](http://raml.org/)). In this post we'll show you how to go from zero to your own production-ready backend in a few minutes.
 
 
-Creating a new product API:
----------------------------
+Creating a new product API
+--------------------------
 
 ### Prerequisites
 
@@ -178,13 +178,19 @@ One thing to note here is that only a crust is _really_ required to make a pizza
 
 Also note the "relationship" field type which designates that the "parent" model (the one we're defining the relationship field on, pizzas) can have multiple different items of from the types of ingredients it is related to (the "child" models in this case being toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
 
-### Backrefs & ondeletes, oh my!
+---
 
-These two arguments are required when defining relationships.
+### Backref & ondelete arguments
 
-A backreference argument is just telling the database that when a model is related to some other model specified by a relationship field, the "child" on the other side will also provide access "backwards" to the parent that defined the relation. E.g. the crust of a particular style of pizza would be accessible as Pizza.crust_id, whereas a list of the pizza styles calling for a given crust would be Crust.pizzas.
+**Here be dragons!** To learn about using relational database concepts in detail, refer to the [SQLAlchemy documentation](http://docs.sqlalchemy.org/en/latest/orm/tutorial.html).
 
-An ondelete argument is telling the database that when the instance of a parent model in a relationship is deleted, to change the value of its child's reference field appropriately. In our case that would be if a particular style of Pizza is deleted, that it's crust would set the reference back to the pizza style as 'NULL'. I.e. nullifying Crust.pizzas['<deleted_pizza_style_id>'] but preserving the particular crust itself and the remaining list of other styles that still call for it.
+###### Briefly
+
+A backref argument tells the database that when a model is related to some other model as indicated by a relationship field, the "referencing" model (which has a foreign_key field) will also provide access "backwards" to the "referenced" model (which has the relationship field).
+
+An ondelete argument is telling the database that when the instance of a referenced model in a relationship is deleted, to change the value of the field on the model that was referencing it appropriately.
+
+---
 
 
 Creating endpoints
