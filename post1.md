@@ -7,7 +7,7 @@ Create a REST API in minutes with Pyramid and Ramses
 * [Bootstrap a new API](#Bootstrap a new API)
 * [Data modeling](#Data modeling)
 * [Creating endpoints](#Creating endpoints)
-* [Initial data](#Initial data)
+* [Seed data](#Seed data)
 
 Foreword
 --------
@@ -415,10 +415,172 @@ Here it is in all its greasy glory:
     }
 
 
-Initial data
+Seed data
 ------------
 
 The last step for bonus points is to import a bunch of existing ingredient records to make things more fun.
 
+First create a `seeds/` directory inside the `pizza_factory` project and download the seed data:
 
+    $ mkdir seeds
+    $ cd seeds/
+    $ http https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/crusts.json
+    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/sauces.json
+    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/cheeses.json
+    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/toppings.json
 
+Now, use the built-in post2api script to load all the ingredients into your API.
+
+    $ nefertari.post2api -f crusts.json -u http://localhost:6543/api/crusts
+    $ nefertari.post2api -f sauces.json -u http://localhost:6543/api/sauces
+    $ nefertari.post2api -f cheeses.json -u http://localhost:6543/api/cheeses
+    $ nefertari.post2api -f toppings.json -u http://localhost:6543/api/toppings
+
+You can now list the different ingredients easily and compose new pizza styles with them. E.g.:
+
+    $ http :6543/api/toppings
+
+Or search for the ingredients by name.
+
+    $ http :6543/api/toppings?name=chicken
+
+    HTTP/1.1 200 OK
+    Cache-Control: max-age=0, must-revalidate, no-cache, no-store
+    Content-Length: 934
+    Content-Type: application/json; charset=UTF-8
+    Date: Fri, 05 Jun 2015 19:58:48 GMT
+    Etag: "fd29d8eda6441cebdd632960a21c8136"
+    Expires: Fri, 05 Jun 2015 19:58:48 GMT
+    Last-Modified: Fri, 05 Jun 2015 19:58:48 GMT
+    Pragma: no-cache
+    Server: waitress
+
+    {
+        "count": 4,
+        "data": [
+            {
+                "_score": 2.3578677,
+                "_type": "Topping",
+                "_version": 0,
+                "description": null,
+                "id": 28,
+                "name": "Chicken Tikka",
+                "pizza": null,
+                "pizza_id": null,
+                "self": "http://localhost:6543/api/toppings/28",
+                "updated_at": null
+            },
+            {
+                "_score": 2.3578677,
+                "_type": "Topping",
+                "_version": 0,
+                "description": null,
+                "id": 27,
+                "name": "Chicken Masala",
+                "pizza": null,
+                "pizza_id": null,
+                "self": "http://localhost:6543/api/toppings/27",
+                "updated_at": null
+            },
+            {
+                "_score": 2.0254436,
+                "_type": "Topping",
+                "_version": 0,
+                "description": null,
+                "id": 14,
+                "name": "BBQ Chicken",
+                "pizza": null,
+                "pizza_id": null,
+                "self": "http://localhost:6543/api/toppings/14",
+                "updated_at": null
+            },
+            {
+                "_score": 2.0254436,
+                "_type": "Topping",
+                "_version": 0,
+                "description": null,
+                "id": 19,
+                "name": "Cajun Chicken",
+                "pizza": null,
+                "pizza_id": null,
+                "self": "http://localhost:6543/api/toppings/19",
+                "updated_at": null
+            }
+        ],
+        "fields": "",
+        "start": 0,
+        "took": 3,
+        "total": 4
+    }
+
+So, let's make one last pizza by finding the ingredients. How about a vegetarian one this time?
+
+Maybe a bit of spinach, ricotta, sundried tomato sauce, and a whole wheat crust. First we find our IDs (yours may be different)..
+
+    $ http :6543/api/toppings?name=spinach
+    ...
+    "id": 88,
+    "name": "Spinach",
+    ...
+    $ http :6543/api/cheeses?name=ricotta
+    ...
+    "id": 18,
+    "name": "Ricotta",
+    ...
+    $ http :6543/api/sauces?name=sun
+    ...
+    "id": 18,
+    "name": "Sun Dried Tomato",
+    ...
+    $ http :6543/api/crusts?name=whole
+    ...
+    "id": 13,
+    "name": "Whole Wheat",
+    ...
+
+Bake for 0 seconds, and..
+
+    $ http POST :6543/api/pizzas name="Veggie Delight" toppings:=[88] cheeses:=[18] sauce=18 crust=13
+
+    HTTP/1.1 201 Created
+    Cache-Control: max-age=0, must-revalidate, no-cache, no-store
+    Content-Length: 382
+    Content-Type: application/json; charset=UTF-8
+    Date: Fri, 05 Jun 2015 20:17:26 GMT
+    Expires: Fri, 05 Jun 2015 20:17:26 GMT
+    Last-Modified: Fri, 05 Jun 2015 20:17:26 GMT
+    Location: http://localhost:6543/api/pizzas/2
+    Pragma: no-cache
+    Server: waitress
+
+    {
+        "data": {
+            "_type": "Pizza",
+            "_version": 0,
+            "cheeses": [
+                18
+            ],
+            "crust": 13,
+            "crust_id": 13,
+            "description": null,
+            "id": 2,
+            "name": "Veggie Delight",
+            "sauce": 18,
+            "sauce_id": 18,
+            "self": "http://localhost:6543/api/pizzas/2",
+            "toppings": [
+                88
+            ],
+            "updated_at": null
+        },
+        "explanation": "",
+        "id": "2",
+        "message": null,
+        "status_code": 201,
+        "timestamp": "2015-06-05T20:17:26Z",
+        "title": "Created"
+    }
+
+Bon apétit!
+
+Check out the full documentation for [Ramses on Readthedocs](https://ramses.readthedocs.org/en/latest/), and the somewhat more advanced [example project on Github](https://github.com/brandicted/ramses-example).
