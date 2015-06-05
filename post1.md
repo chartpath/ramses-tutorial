@@ -424,7 +424,7 @@ First create a `seeds/` directory inside the `pizza_factory` project and downloa
 
     $ mkdir seeds
     $ cd seeds/
-    $ http https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/crusts.json
+    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/crusts.json
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/sauces.json
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/cheeses.json
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/toppings.json
