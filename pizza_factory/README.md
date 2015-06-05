@@ -1,8 +1,7 @@
 ## Installation
-```
-$ pip install -r requirements.txt
+
+    $ pip install -r requirements.txt
 
 ## Run
-```
-$ pserve local.ini
-```
+
+    $ pserve local.ini

@@ -1,6 +1,19 @@
 Create a REST API in minutes with Pyramid and Ramses
 ====================================================
 
+#### Contents
+
+* [Intro](#Intro)
+* [Bootstrap a new API](#Bootstrap a new API)
+* [Data modeling](#Data modeling)
+* [Creating endpoints](#Creating endpoints)
+* [Initial data](#Initial data)
+
+Foreword
+--------
+
+This tutorial is meant for beginners. If you get stuck along the way, try to power through and it will probably click. If there's anything you just don't get or want some help with, email [info@brandicted.com](mailto:info@brandicted.com).
+
 
 Intro
 -----
@@ -12,35 +25,35 @@ Some drawbacks of using third party backend providers include a lack of control 
 Enter Ramses, a simple way to generate a powerful backend from a YAML file (actually a dialect for REST APIs called [RAML](http://raml.org/)). In this post we'll show you how to go from zero to your own production-ready backend in a few minutes.
 
 
-Creating a new product API
---------------------------
+Bootstrap a new product API
+---------------------------
 
 ### Prerequisites
 
 We assume you are working inside a fresh [virtual Python environment](https://virtualenv.pypa.io/en/latest/), and are running both [elasticsearch](https://www.elastic.co/downloads/elasticsearch) and [postgresql](http://www.postgresql.org/download/) with default configurations. We use [httpie](https://github.com/jakubroztocil/httpie) to interact with the API but you can also use curl or other http clients.
 
-If at any time you get stuck or want to see the final working version of the code for this tutorial, [it can be found here]().
+If at any time you get stuck or want to see the final working version of the code for this tutorial, [it can be found here](https://github.com/chrstphrhrt/ramses-tutorial/tree/master/pizza_factory).
 
 ### Scenario: a factory to make (hopefully) delicious pizzas
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/FatPizzaShopHumeHwyChullora.JPG/400px-FatPizzaShopHumeHwyChullora.JPG" alt="Python Pizzeria" style="float:right;padding-left:20px">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/FatPizzaShopHumeHwyChullora.JPG/440px-FatPizzaShopHumeHwyChullora.JPG" alt="Python Pizzeria" style="float:right;padding-left:20px">
 
-We want to create an API for our new pizzeria. Our backend should know about all the different toppings, cheeses, sauces, and crusts that can be used and the different combinations of them that go into making various pizza styles. We also want to be able to do queries to figure out which styles are currently available based on the availability of their ingredients, and to be able to create new pizza styles on the fly.
+We want to create an API for our new pizzeria. Our backend should know about all the different toppings, cheeses, sauces, and crusts that can be used and the different combinations of them that go into making various pizza styles.
 
     $ pip install ramses
     $ pcreate -s ramses_starter pizza_factory
 
-The installer will ask which database backend you want to use. Pick option 1 to use SQLAlchemy ('sqla').
+The installer will ask which database backend you want to use. Pick option "1" to use SQLAlchemy.
 
 Change into the newly created directory and look around.
 
     $ cd pizza_factory
 
-Run the built-in server to start interacting with your new backend. All endpoints will be accessible at the URI /api/<endpoint-name>/<endpoint-id>. The server runs on port 6543 by default.
+All endpoints will be accessible at the URI /api/endpoint-name/item-id. The built-in server runs on port 6543 by default. Have a read through **local.ini** and see if it makes any sense. Then run the server to start interacting with your new backend.
 
     $ pserve local.ini
 
-Look at api.raml to get an idea of how endpoints are specified.
+Look at **api.raml** to get an idea of how endpoints are specified.
 
     #%RAML 0.8
     ---
@@ -73,7 +86,7 @@ Look at api.raml to get an idea of how endpoints are specified.
             patch:
                 description: Update a particular item
 
-As you can see, we have a resource called "items" at /api/items which is defined by the schema in items.json.
+As you can see, we have a resource at /api/items which is defined by the schema in **items.json**.
 
     $ http :6543/api/items
     HTTP/1.1 200 OK
@@ -96,14 +109,14 @@ As you can see, we have a resource called "items" at /api/items which is defined
     }
 
 
-Data modelling
---------------
+Data modeling
+-------------
 
 ### Schemas!
 
 Schemas describe the structure of data.
 
-We need to create schemata for the different kinds of ingredients that we will make our pizzas from. The default schema from Ramses is a basic example in items.json.
+We need to create them for each of the different kinds of ingredients that we will make our pizzas with. The default schema from Ramses is a basic example in **items.json**.
 
 Since we're going to have more than one schema in our project, let's create a new directory and move the default schema into it to keep things clean.
 
@@ -111,14 +124,23 @@ Since we're going to have more than one schema in our project, let's create a ne
     $ mv items.json schemas/
     $ cd schemas/
 
-**Rename items.json to pizzas.json** and open it in a text editor. Then copy its contents into new additional new files in the shcemas directory named _toppings.json_, _cheeses.json_, _sauces.json_, and _crusts.json_.
+**Rename items.json to pizzas.json** and open it in a text editor. Then copy its contents into new files in the same directory with the names **toppings.json**, **cheeses.json**, **sauces.json**, and **crusts.json**.
 
-In each new schema, update the value of the "title" field for the different ingredient categories that are being described (i.e. "title": "Pizza schema", etc.).
+    $ tree
+    .
+    ├── cheeses.json
+    ├── crusts.json
+    ├── pizzas.json
+    ├── sauces.json
+    └── toppings.json
 
-Let's edit the **pizzas.json** schema to hook up the ingredients that would go into a given pizza.
+In each new schema, update the value of the `"title"` field for the different kinds of things that are being described (e.g. `"title": "Pizza schema"`, `"title": "Topping schema"` etc.).
 
-Under the "id", "name" and "description" fields, add the following relations to the ingredients:
+Let's edit the **pizzas.json** schema to hook up the ingredients that would go into a given style of pizza.
 
+After the `"description"` field, add the following relations with the ingredients:
+
+    ...
     "toppings": {
         "required": false,
         "type": "relationship",
@@ -126,7 +148,7 @@ Under the "id", "name" and "description" fields, add the following relations to 
             "document": "Topping",
             "ondelete": "NULLIFY",
             "backref_name": "pizza",
-            "backref_ondelete": "NULLIFY",
+            "backref_ondelete": "NULLIFY"
         }
     },
     "cheeses": {
@@ -136,7 +158,7 @@ Under the "id", "name" and "description" fields, add the following relations to 
             "document": "Cheese",
             "ondelete": "NULLIFY",
             "backref_name": "pizza",
-            "backref_ondelete": "NULLIFY",
+            "backref_ondelete": "NULLIFY"
         }
     },
     "sauce_id": {
@@ -157,11 +179,13 @@ Under the "id", "name" and "description" fields, add the following relations to 
             "ref_column_type": "id_field"
         }
     }
+    ...
 
 ### Relations
 
-We need to do the same thing for each ingredient schema to link the ingredients to the pizza styles that call for them. In **toppings.json** we need a foreign key to the individual pizza IDs that each topping would be used by (again, put this after "name" and "description"):
+We need to do the same for each of the ingredients to link them to the pizza style recipes that call for them. In **toppings.json** and **cheeses.json** we need a `"foreign_key"` field pointing to the specific pizza style that each topping would be used for (again, put this after the `"description"` field):
 
+    ...
     "pizza_id": {
         "required": false,
         "type": "foreign_key",
@@ -171,34 +195,44 @@ We need to do the same thing for each ingredient schema to link the ingredients 
             "ref_column_type": "id_field"
         }
     }
+    ...
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Pizza_dough_recipe.jpg/400px-Pizza_dough_recipe.jpg" alt="Python Pizzeria" style="float:left;padding-right:20px">
+Then in both **sauces.json** and **crusts.json** we do the _reverse_ (by specifying `"relationship"` fields instead of `"foreign_key"` fields) because these two ingredients are being referenced by the particular instances of the pizza styles that call for them:
 
-One thing to note here is that only a crust is _really_ required to make a pizza if you think long and hard about it. Maybe we'd just call it bread at that point, but let's not get too philosophical.
+    ...
+    "pizzas": {
+        "required": false,
+        "type": "relationship",
+        "args": {
+            "document": "Pizza",
+            "ondelete": "NULLIFY",
+            "backref_name": "sauce",
+            "backref_ondelete": "NULLIFY"
+        }
+    }
+    ...
 
-Also note the "relationship" field type which designates that the "parent" model (the one we're defining the relationship field on, pizzas) can have multiple different items of from the types of ingredients it is related to (the "child" models in this case being toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
+For **crusts.json** just make sure to set the value of `"backref_name"` to `"crust"`.
 
----
+One thing to note here is that only a crust is _really_ required to make a pizza if you think long and hard about it. Maybe we'd have to call it bread at that point, but let's not get too philosophical.
+
+Also note the `"relationship"` field type which designates that the "parent/referenced" model (the one we're defining the relationship field on, i.e. pizzas) can have multiple different items from the kinds of ingredients it is related to (i.e. the "child/referencing" models in this case being toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
 
 ### Backref & ondelete arguments
 
-**Here be dragons!** To learn about using relational database concepts in detail, refer to the [SQLAlchemy documentation](http://docs.sqlalchemy.org/en/latest/orm/tutorial.html).
-
-##### _Very_ briefly
+**To learn about using relational database concepts in detail, refer to the [SQLAlchemy documentation](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html).** _Very_ briefly:
 
 A `backref` argument tells the database that when one model is referenced by another, the "referencing" model (which has a `foreign_key` field) will also provide access "backwards" to the "referenced" model.
 
 An `ondelete` argument is telling the database that when the instance of a referenced model is deleted, to change the value of the referencing field accordingly. `NULLIFY` means that the value will be set to `null`.
 
----
-
 
 Creating endpoints
 ------------------
 
-At this point, our kitchen is almost ready. In order to actually start making pizzas, we need to hook up some API enpoints to access the data models we just created.
+At this point, our kitchen is almost ready. In order to actually start making pizzas, we need to hook up some API endpoints to access the data models we just created.
 
-Let's open up **api.raml** and replace the old "items" endpoint for each of our real models like so:
+Let's edit **api.raml** by replacing the default "items" endpoint for each of our resources like so:
 
     #%RAML 0.8
     ---
@@ -211,25 +245,6 @@ Let's open up **api.raml** and replace the old "items" endpoint for each of our 
     version: v1
     mediaType: application/json
     protocols: [HTTP]
-
-    /pizzas:
-        displayName: Collection of pizza styles
-        get:
-            description: Get all pizza styles
-        post:
-            description: Create a new pizza style
-            body:
-                application/json:
-                    schema: !include schemas/pizzas.json
-
-        /{id}:
-            displayName: A particular pizza style
-            get:
-                description: Get a particular pizza style
-            delete:
-                description: Delete a particular pizza style
-            patch:
-                description: Update a particular pizza style
 
     /toppings:
         displayName: Collection of ingredients for toppings
@@ -269,6 +284,25 @@ Let's open up **api.raml** and replace the old "items" endpoint for each of our 
             patch:
                 description: Update a particular cheese
 
+    /pizzas:
+        displayName: Collection of pizza styles
+        get:
+            description: Get all pizza styles
+        post:
+            description: Create a new pizza style
+            body:
+                application/json:
+                    schema: !include schemas/pizzas.json
+
+        /{id}:
+            displayName: A particular pizza style
+            get:
+                description: Get a particular pizza style
+            delete:
+                description: Delete a particular pizza style
+            patch:
+                description: Update a particular pizza style
+
     /sauces:
         displayName: Collection of different sauces
         get:
@@ -307,18 +341,43 @@ Let's open up **api.raml** and replace the old "items" endpoint for each of our 
             patch:
                 description: Update a particular crust
 
-We can easily create our own ingredients and pizza styles now!
+**Notice the order of endpoint definitions**. `/pizzas` is placed after `/toppings` and `/cheeses` because it relates to them. `/sauces` and `/crusts` are placed after `/pizzas` because they relate to it. If you get any kind of errors about things missing or not being defined when starting the server, check the order of definition.
 
-Restart the server and get cooking:
+Now we can create our own ingredients and pizza styles!
+
+Restart the server and get cooking.
 
     $ pserve local.ini
 
 Let's start by making a Hawaiian style pizza:
 
-    $ http POST :6543/api/toppings name=ham description="because yum"
+    $ http POST :6543/api/toppings name=ham description="extra filthy"
+    HTTP/1.1 201 Created...
+
+    $ http POST :6543/api/toppings name=pineapple description="thanks Hawai'i"
+    HTTP/1.1 201 Created...
+
+    $ http POST :6543/api/cheeses name=mozzarella description="soft and boring"
+    HTTP/1.1 201 Created...
+
+    $ http POST :6543/api/sauces name=tomato description="the usual"
+
+    $ http POST :6543/api/crusts name=plain description="just normal white dough"
+    HTTP/1.1 201 Created...
+
+    $ http POST :6543/api/pizzas name=hawaiian description="old school ham and pineapple ftw" toppings=[1,2] cheeses=1 sauce=1 crust=1
+
+#### Voila!
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Hawaiian_pizza.jpg/660px-Hawaiian_pizza.jpg" alt="Hawaiian Pizza">
+
+Here it is in all its greasy glory:
+
     $ 
 
 
 Initial data
 ------------
+
+The last step for bonus points is to import a bunch of existing ingredient records to make building more fun.
 

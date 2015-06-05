@@ -17,6 +17,44 @@
         "description": {
             "required": false,
             "type": "text"
+        },
+        "toppings": {
+            "required": false,
+            "type": "relationship",
+            "args": {
+                "document": "Topping",
+                "ondelete": "NULLIFY",
+                "backref_name": "pizza",
+                "backref_ondelete": "NULLIFY"
+            }
+        },
+        "cheeses": {
+            "required": false,
+            "type": "relationship",
+            "args": {
+                "document": "Cheese",
+                "ondelete": "NULLIFY",
+                "backref_name": "pizza",
+                "backref_ondelete": "NULLIFY"
+            }
+        },
+        "sauce_id": {
+            "required": false,
+            "type": "foreign_key",
+            "args": {
+                "ref_document": "Sauce",
+                "ref_column": "sauce.id",
+                "ref_column_type": "id_field"
+            }
+        },
+        "crust_id": {
+            "required": true,
+            "type": "foreign_key",
+            "args": {
+                "ref_document": "Crust",
+                "ref_column": "crust.id",
+                "ref_column_type": "id_field"
+            }
         }
     }
 }
