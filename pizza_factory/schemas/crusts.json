@@ -24,7 +24,7 @@
             "args": {
                 "document": "Pizza",
                 "ondelete": "NULLIFY",
-                "backref_name": "sauce",
+                "backref_name": "crust",
                 "backref_ondelete": "NULLIFY"
             }
         }

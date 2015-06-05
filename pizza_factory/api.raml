@@ -10,25 +10,6 @@ version: v1
 mediaType: application/json
 protocols: [HTTP]
 
-/pizzas:
-    displayName: Collection of pizza styles
-    get:
-        description: Get all pizza styles
-    post:
-        description: Create a new pizza style
-        body:
-            application/json:
-                schema: !include schemas/pizzas.json
-
-    /{id}:
-        displayName: A particular pizza style
-        get:
-            description: Get a particular pizza style
-        delete:
-            description: Delete a particular pizza style
-        patch:
-            description: Update a particular pizza style
-
 /toppings:
     displayName: Collection of ingredients for toppings
     get:
@@ -66,6 +47,25 @@ protocols: [HTTP]
             description: Delete a particular cheese
         patch:
             description: Update a particular cheese
+
+/pizzas:
+    displayName: Collection of pizza styles
+    get:
+        description: Get all pizza styles
+    post:
+        description: Create a new pizza style
+        body:
+            application/json:
+                schema: !include schemas/pizzas.json
+
+    /{id}:
+        displayName: A particular pizza style
+        get:
+            description: Get a particular pizza style
+        delete:
+            description: Delete a particular pizza style
+        patch:
+            description: Update a particular pizza style
 
 /sauces:
     displayName: Collection of different sauces

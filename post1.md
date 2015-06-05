@@ -351,21 +351,21 @@ Restart the server and get cooking.
 
 Let's start by making a Hawaiian style pizza:
 
-    $ http POST :6543/api/toppings name=ham description="extra mud"
+    $ http POST :6543/api/toppings name=ham
     HTTP/1.1 201 Created...
 
-    $ http POST :6543/api/toppings name=pineapple description="thanks Hawai'i"
+    $ http POST :6543/api/toppings name=pineapple
     HTTP/1.1 201 Created...
 
-    $ http POST :6543/api/cheeses name=mozzarella description="soft and boring"
+    $ http POST :6543/api/cheeses name=mozzarella
     HTTP/1.1 201 Created...
 
-    $ http POST :6543/api/sauces name=tomato description="the usual"
+    $ http POST :6543/api/sauces name=tomato
 
-    $ http POST :6543/api/crusts name=plain description="just normal white dough"
+    $ http POST :6543/api/crusts name=plain
     HTTP/1.1 201 Created...
 
-    $ http POST :6543/api/pizzas name=hawaiian description="old school ham and pineapple ftw" toppings:=[1,2] cheeses:[=1] sauce_id=1 crust_id=1
+    $ http POST :6543/api/pizzas name=hawaiian toppings:=[1,2] sauce_id=1 crust_id=1
 
 #### Voila!
 
@@ -373,7 +373,41 @@ Let's start by making a Hawaiian style pizza:
 
 Here it is in all its greasy glory:
 
-    $ 
+    HTTP/1.1 201 Created
+    Cache-Control: max-age=0, must-revalidate, no-cache, no-store
+    Content-Length: 348
+    Content-Type: application/json; charset=UTF-8
+    Date: Fri, 05 Jun 2015 04:32:16 GMT
+    Expires: Fri, 05 Jun 2015 04:32:16 GMT
+    Last-Modified: Fri, 05 Jun 2015 04:32:16 GMT
+    Location: http://localhost:6543/api/pizzas/1
+    Pragma: no-cache
+    Server: waitress
+
+    {
+        "data": {
+            "_type": "Pizza",
+            "_version": 0,
+            "cheeses": [],
+            "crust_id": 1,
+            "description": null,
+            "id": 1,
+            "name": "hawaiian",
+            "sauce_id": 1,
+            "self": "http://localhost:6543/api/pizzas/1",
+            "toppings": [
+                1,
+                2
+            ],
+            "updated_at": null
+        },
+        "explanation": "",
+        "id": "1",
+        "message": null,
+        "status_code": 201,
+        "timestamp": "2015-06-05T04:32:16Z",
+        "title": "Created"
+    }
 
 
 Initial data
