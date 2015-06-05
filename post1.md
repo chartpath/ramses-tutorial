@@ -361,11 +361,12 @@ Let's start by making a Hawaiian style pizza:
     HTTP/1.1 201 Created...
 
     $ http POST :6543/api/sauces name=tomato
+    HTTP/1.1 201 Created...
 
     $ http POST :6543/api/crusts name=plain
     HTTP/1.1 201 Created...
 
-    $ http POST :6543/api/pizzas name=hawaiian toppings:=[1,2] sauce_id=1 crust_id=1
+    $ http POST :6543/api/pizzas name=hawaiian toppings:=[1,2] cheeses:=[1] sauce=1 crust=1
 
 #### Voila!
 
@@ -375,11 +376,11 @@ Here it is in all its greasy glory:
 
     HTTP/1.1 201 Created
     Cache-Control: max-age=0, must-revalidate, no-cache, no-store
-    Content-Length: 348
+    Content-Length: 373
     Content-Type: application/json; charset=UTF-8
-    Date: Fri, 05 Jun 2015 04:32:16 GMT
-    Expires: Fri, 05 Jun 2015 04:32:16 GMT
-    Last-Modified: Fri, 05 Jun 2015 04:32:16 GMT
+    Date: Fri, 05 Jun 2015 18:47:53 GMT
+    Expires: Fri, 05 Jun 2015 18:47:53 GMT
+    Last-Modified: Fri, 05 Jun 2015 18:47:53 GMT
     Location: http://localhost:6543/api/pizzas/1
     Pragma: no-cache
     Server: waitress
@@ -388,11 +389,15 @@ Here it is in all its greasy glory:
         "data": {
             "_type": "Pizza",
             "_version": 0,
-            "cheeses": [],
+            "cheeses": [
+                1
+            ],
+            "crust": 1,
             "crust_id": 1,
             "description": null,
             "id": 1,
             "name": "hawaiian",
+            "sauce": 1,
             "sauce_id": 1,
             "self": "http://localhost:6543/api/pizzas/1",
             "toppings": [
@@ -405,7 +410,7 @@ Here it is in all its greasy glory:
         "id": "1",
         "message": null,
         "status_code": 201,
-        "timestamp": "2015-06-05T04:32:16Z",
+        "timestamp": "2015-06-05T18:47:53Z",
         "title": "Created"
     }
 
@@ -413,5 +418,7 @@ Here it is in all its greasy glory:
 Initial data
 ------------
 
-The last step for bonus points is to import a bunch of existing ingredient records to make building more fun.
+The last step for bonus points is to import a bunch of existing ingredient records to make things more fun.
+
+
 
