@@ -351,7 +351,7 @@ Restart the server and get cooking.
 
 Let's start by making a Hawaiian style pizza:
 
-    $ http POST :6543/api/toppings name=ham description="extra filthy"
+    $ http POST :6543/api/toppings name=ham description="extra mud"
     HTTP/1.1 201 Created...
 
     $ http POST :6543/api/toppings name=pineapple description="thanks Hawai'i"
@@ -365,7 +365,7 @@ Let's start by making a Hawaiian style pizza:
     $ http POST :6543/api/crusts name=plain description="just normal white dough"
     HTTP/1.1 201 Created...
 
-    $ http POST :6543/api/pizzas name=hawaiian description="old school ham and pineapple ftw" toppings=[1,2] cheeses=1 sauce=1 crust=1
+    $ http POST :6543/api/pizzas name=hawaiian description="old school ham and pineapple ftw" toppings:=[1,2] cheeses:[=1] sauce_id=1 crust_id=1
 
 #### Voila!
 
