@@ -40,21 +40,28 @@ If at any time you get stuck or want to see the final working version of the cod
 
 We want to create an API for our new pizzeria. Our backend should know about all the different toppings, cheeses, sauces, and crusts that can be used and the different combinations of them that go into making various pizza styles.
 
+```sh
     $ pip install ramses
     $ pcreate -s ramses_starter pizza_factory
+```
 
 The installer will ask which database backend you want to use. Pick option "1" to use SQLAlchemy.
 
 Change into the newly created directory and look around.
 
+```sh
     $ cd pizza_factory
+```
 
 All endpoints will be accessible at the URI /api/endpoint-name/item-id. The built-in server runs on port 6543 by default. Have a read through **local.ini** and see if it makes any sense. Then run the server to start interacting with your new backend.
 
+```sh
     $ pserve local.ini
+```
 
 Look at **api.raml** to get an idea of how endpoints are specified.
 
+```yaml
     #%RAML 0.8
     ---
     title: pizza_factory API
@@ -85,9 +92,11 @@ Look at **api.raml** to get an idea of how endpoints are specified.
                 description: Delete a particular item
             patch:
                 description: Update a particular item
+```
 
 As you can see, we have a resource at /api/items which is defined by the schema in **items.json**.
 
+```sh
     $ http :6543/api/items
     HTTP/1.1 200 OK
     Cache-Control: max-age=0, must-revalidate, no-cache, no-store
@@ -107,6 +116,7 @@ As you can see, we have a resource at /api/items which is defined by the schema 
         "took": 1,
         "total": 0
     }
+```
 
 
 Data modeling
@@ -120,12 +130,15 @@ We need to create them for each of the different kinds of ingredients that we wi
 
 Since we're going to have more than one schema in our project, let's create a new directory and move the default schema into it to keep things clean.
 
+```sh
     $ mkdir schemas
     $ mv items.json schemas/
     $ cd schemas/
+```
 
 **Rename items.json to pizzas.json** and open it in a text editor. Then copy its contents into new files in the same directory with the names **toppings.json**, **cheeses.json**, **sauces.json**, and **crusts.json**.
 
+```sh
     $ tree
     .
     ├── cheeses.json
@@ -133,6 +146,7 @@ Since we're going to have more than one schema in our project, let's create a ne
     ├── pizzas.json
     ├── sauces.json
     └── toppings.json
+```
 
 In each new schema, update the value of the `"title"` field for the different kinds of things that are being described (e.g. `"title": "Pizza schema"`, `"title": "Topping schema"` etc.).
 
@@ -140,6 +154,7 @@ Let's edit the **pizzas.json** schema to hook up the ingredients that would go i
 
 After the `"description"` field, add the following relations with the ingredients:
 
+```json
     ...
     "toppings": {
         "required": false,
@@ -180,11 +195,13 @@ After the `"description"` field, add the following relations with the ingredient
         }
     }
     ...
+```
 
 ### Relations
 
 We need to do the same for each of the ingredients to link them to the pizza style recipes that call for them. In **toppings.json** and **cheeses.json** we need a `"foreign_key"` field pointing to the specific pizza style that each topping would be used for (again, put this after the `"description"` field):
 
+```json
     ...
     "pizza_id": {
         "required": false,
@@ -196,9 +213,11 @@ We need to do the same for each of the ingredients to link them to the pizza sty
         }
     }
     ...
+```
 
 Then in both **sauces.json** and **crusts.json** we do the _reverse_ (by specifying `"relationship"` fields instead of `"foreign_key"` fields) because these two ingredients are being referenced by the particular instances of the pizza styles that call for them:
 
+```json
     ...
     "pizzas": {
         "required": false,
@@ -211,6 +230,7 @@ Then in both **sauces.json** and **crusts.json** we do the _reverse_ (by specify
         }
     }
     ...
+```
 
 For **crusts.json** just make sure to set the value of `"backref_name"` to `"crust"`.
 
@@ -234,6 +254,7 @@ At this point, our kitchen is almost ready. In order to actually start making pi
 
 Let's edit **api.raml** by replacing the default "items" endpoint for each of our resources like so:
 
+```yaml
     #%RAML 0.8
     ---
     title: pizza_factory API
@@ -340,6 +361,7 @@ Let's edit **api.raml** by replacing the default "items" endpoint for each of ou
                 description: Delete a particular crust
             patch:
                 description: Update a particular crust
+```
 
 **Notice the order of endpoint definitions**. `/pizzas` is placed after `/toppings` and `/cheeses` because it relates to them. `/sauces` and `/crusts` are placed after `/pizzas` because they relate to it. If you get any kind of errors about things missing or not being defined when starting the server, check the order of definition.
 
@@ -347,26 +369,40 @@ Now we can create our own ingredients and pizza styles!
 
 Restart the server and get cooking.
 
+```sh
     $ pserve local.ini
+```
 
 Let's start by making a Hawaiian style pizza:
 
+```sh
     $ http POST :6543/api/toppings name=ham
     HTTP/1.1 201 Created...
+```
 
+```sh
     $ http POST :6543/api/toppings name=pineapple
     HTTP/1.1 201 Created...
+```
 
+```sh
     $ http POST :6543/api/cheeses name=mozzarella
     HTTP/1.1 201 Created...
+```
 
+```sh
     $ http POST :6543/api/sauces name=tomato
     HTTP/1.1 201 Created...
+```
 
+```sh
     $ http POST :6543/api/crusts name=plain
     HTTP/1.1 201 Created...
+```
 
+```sh
     $ http POST :6543/api/pizzas name=hawaiian toppings:=[1,2] cheeses:=[1] sauce=1 crust=1
+```
 
 #### Voila!
 
@@ -374,6 +410,7 @@ Let's start by making a Hawaiian style pizza:
 
 Here it is in all its greasy glory:
 
+```sh
     HTTP/1.1 201 Created
     Cache-Control: max-age=0, must-revalidate, no-cache, no-store
     Content-Length: 373
@@ -413,6 +450,7 @@ Here it is in all its greasy glory:
         "timestamp": "2015-06-05T18:47:53Z",
         "title": "Created"
     }
+```
 
 
 Seed data
@@ -422,26 +460,33 @@ The last step for bonus points is to import a bunch of existing ingredient recor
 
 First create a `seeds/` directory inside the `pizza_factory` project and download the seed data:
 
+```sh
     $ mkdir seeds
     $ cd seeds/
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/crusts.json
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/sauces.json
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/cheeses.json
     $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/toppings.json
+```
 
 Now, use the built-in post2api script to load all the ingredients into your API.
 
+```sh
     $ nefertari.post2api -f crusts.json -u http://localhost:6543/api/crusts
     $ nefertari.post2api -f sauces.json -u http://localhost:6543/api/sauces
     $ nefertari.post2api -f cheeses.json -u http://localhost:6543/api/cheeses
     $ nefertari.post2api -f toppings.json -u http://localhost:6543/api/toppings
+```
 
 You can now list the different ingredients easily.
 
+```sh
     $ http :6543/api/toppings
+```
 
 Or search for the ingredients by name.
 
+```sh
     $ http :6543/api/toppings?name=chicken
 
     HTTP/1.1 200 OK
@@ -512,11 +557,13 @@ Or search for the ingredients by name.
         "took": 3,
         "total": 4
     }
+```
 
 So, let's make one last pizza by finding the ingredients. How about a vegetarian one this time?
 
 Maybe a bit of spinach, ricotta, sundried tomato sauce, and a whole wheat crust. First we find our IDs (yours may be different)..
 
+```sh
     $ http :6543/api/toppings?name=spinach
     ...
     "id": 88,
@@ -537,9 +584,11 @@ Maybe a bit of spinach, ricotta, sundried tomato sauce, and a whole wheat crust.
     "id": 13,
     "name": "Whole Wheat",
     ...
+```
 
 Bake for 0 seconds, and..
 
+```sh
     $ http POST :6543/api/pizzas name="Veggie Delight" toppings:=[88] cheeses:=[18] sauce=18 crust=13
 
     HTTP/1.1 201 Created
@@ -580,6 +629,7 @@ Bake for 0 seconds, and..
         "timestamp": "2015-06-05T20:17:26Z",
         "title": "Created"
     }
+```
 
 Bon apétit!
 
