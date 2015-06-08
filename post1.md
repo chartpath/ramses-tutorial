@@ -436,7 +436,7 @@ Now, use the built-in post2api script to load all the ingredients into your API.
     $ nefertari.post2api -f cheeses.json -u http://localhost:6543/api/cheeses
     $ nefertari.post2api -f toppings.json -u http://localhost:6543/api/toppings
 
-You can now list the different ingredients easily and compose new pizza styles with them. E.g.:
+You can now list the different ingredients easily.
 
     $ http :6543/api/toppings
 
