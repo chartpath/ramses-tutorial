@@ -197,7 +197,7 @@ After the `"description"` field, add the following relations with the ingredient
     ...
 ```
 
-### Relations
+### Relations 101
 
 We need to do the same for each of the ingredients to link them to the pizza style recipes that call for them. In **toppings.json** and **cheeses.json** we need a `"foreign_key"` field pointing to the specific pizza style that each topping would be used for (again, put this after the `"description"` field):
 
@@ -236,7 +236,41 @@ For **crusts.json** just make sure to set the value of `"backref_name"` to `"cru
 
 One thing to note here is that only a crust is _really_ required to make a pizza if you think long and hard about it. Maybe we'd have to call it bread at that point, but let's not get too philosophical.
 
-Also note the `"relationship"` field type which designates that the "parent/referenced" model (the one we're defining the relationship field on, i.e. pizzas) can have multiple different items from the kinds of ingredients it is related to (i.e. the "child/referencing" models in this case being toppings and cheeses). A pizza in our universe can only have one sauce and one crust though.
+Also note that _we have two different "directions"_ of pizza-to-ingredient relationships going on. Pizzas have many toppings and cheeses. These are "One (pizza) to Many (ingredients)" relationships. Pizzas only have one sauce and one crust though. Each sauce or crust may be called for by many different pizza styles. When talking about pizzas, we say there is a "Many (pizzas) to One (sauce/crust)" relationship. Whichever "direction" you want to call it by is only a matter of the entity you are talking about as a point of reference.
+
+One-to-Many relationships have a `relationship` field on the "One" side and a `foreign_key` field on the "Many" side, e.g. pizzas (as described in **pizzas.json**) have many `"toppings"`:
+
+```json
+    ...
+    "toppings": {
+        "required": false,
+        "type": "relationship",
+        "args": {
+            "document": "Topping",
+            "ondelete": "NULLIFY",
+            "backref_name": "pizza",
+            "backref_ondelete": "NULLIFY"
+        }
+    ...
+```
+
+...and each topping (as described in **toppings.json**) is called for by certain specific pizzas (`"pizza_id"`):
+
+```json
+    ...
+    "pizza_id": {
+        "required": false,
+        "type": "foreign_key",
+        "args": {
+            "ref_document": "Pizza",
+            "ref_column": "pizza.id",
+            "ref_column_type": "id_field"
+        }
+    }
+    ...
+```
+
+Many-to-One relationships have a `foreign_key` field on the "Many" side and a `relationship` field on the One side. That's why toppings have a `foreign_key` field pointing to specific pizzas, and pizzas have a `relationship` field pointing to all their toppings.
 
 ### Backref & ondelete arguments
 
