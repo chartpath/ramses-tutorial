@@ -64,13 +64,12 @@ Look at **api.raml** to get an idea of how endpoints are specified.
 ```yaml
     #%RAML 0.8
     ---
-    title: pizza_factory API
+    title: pizza_factory
     documentation:
         - title: pizza_factory REST API
           content: |
             Welcome to the pizza_factory API.
-    baseUri: http://{host}:{port}/{version}
-    version: v1
+    baseUri: http://localhost:6543/api
     mediaType: application/json
     protocols: [HTTP]
 
