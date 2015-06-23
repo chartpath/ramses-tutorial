@@ -295,8 +295,7 @@ Let's edit **api.raml** by replacing the default "items" endpoint for each of ou
         - title: pizza_factory REST API
           content: |
             Welcome to the pizza_factory API.
-    baseUri: http://{host}:{port}/{version}
-    version: v1
+    baseUri: http://localhost:6543/api
     mediaType: application/json
     protocols: [HTTP]
 
