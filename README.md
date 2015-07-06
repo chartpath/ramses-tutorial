@@ -495,10 +495,10 @@ First create a `seeds/` directory inside the `pizza_factory` project and downloa
 ```sh
     $ mkdir seeds
     $ cd seeds/
-    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/crusts.json
-    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/sauces.json
-    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/cheeses.json
-    $ http -d https://github.com/chrstphrhrt/ramses-tutorial/blob/master/pizza_factory/seeds/toppings.json
+    $ http -d https://raw.githubusercontent.com/chrstphrhrt/ramses-tutorial/master/pizza_factory/seeds/crusts.json
+    $ http -d https://raw.githubusercontent.com/chrstphrhrt/ramses-tutorial/master/pizza_factory/seeds/sauces.json
+    $ http -d https://raw.githubusercontent.com/chrstphrhrt/ramses-tutorial/master/pizza_factory/seeds/cheeses.json
+    $ http -d https://raw.githubusercontent.com/chrstphrhrt/ramses-tutorial/master/pizza_factory/seeds/toppings.json
 ```
 
 Now, use the built-in post2api script to load all the ingredients into your API.
